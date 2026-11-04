@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { categoryValidator } from "./lib/categories";
 
 export default defineSchema({
   // One row per signed-in person. The role lives here (never in the client
@@ -17,7 +18,7 @@ export default defineSchema({
   tools: defineTable({
     ownerId: v.id("users"),
     name: v.string(),
-    category: v.string(),
+    category: categoryValidator,
     condition: v.string(),
     description: v.string(),
   })

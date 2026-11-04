@@ -1,23 +1,90 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-accent: #f97316;
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
-  --color-text: #0f172a;
-  --color-muted: #475569;
-  --color-border: #e2e8f0;
+/* next-themes toggles the `dark` class on <html>; make dark: variants follow it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Raw palette per mode. Components never use these directly: they use the
+   semantic classes below (bg-surface, text-muted, ...), so a theme change is
+   a one-place edit. */
+:root {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --link: #4338ca;
+  --accent: #f97316;
+
+  --pending-bg: #fef3c7;
+  --pending-fg: #92400e;
+  --approved-bg: #dcfce7;
+  --approved-fg: #166534;
+  --declined-bg: #fee2e2;
+  --declined-fg: #b91c1c;
+  --returned-bg: #f1f5f9;
+  --returned-fg: #475569;
+  --overdue-bg: #b91c1c;
+  --overdue-fg: #ffffff;
+  --trusted-bg: #ede9fe;
+  --trusted-fg: #5b21b6;
+}
+
+.dark {
+  --background: #0b1120;
+  --surface: #111827;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #334155;
+  --link: #a5b4fc;
+  --accent: #fb923c;
+
+  --pending-bg: #451a03;
+  --pending-fg: #fcd34d;
+  --approved-bg: #052e16;
+  --approved-fg: #86efac;
+  --declined-bg: #450a0a;
+  --declined-fg: #fca5a5;
+  --returned-bg: #1e293b;
+  --returned-fg: #cbd5e1;
+  --overdue-bg: #dc2626;
+  --overdue-fg: #ffffff;
+  --trusted-bg: #2e1065;
+  --trusted-fg: #c4b5fd;
 }
 
 @theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-link: var(--link);
+  --color-accent: var(--accent);
+
+  /* Same in both modes. */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-foreground: #ffffff;
+
+  --color-pending-bg: var(--pending-bg);
+  --color-pending-fg: var(--pending-fg);
+  --color-approved-bg: var(--approved-bg);
+  --color-approved-fg: var(--approved-fg);
+  --color-declined-bg: var(--declined-bg);
+  --color-declined-fg: var(--declined-fg);
+  --color-returned-bg: var(--returned-bg);
+  --color-returned-fg: var(--returned-fg);
+  --color-overdue-bg: var(--overdue-bg);
+  --color-overdue-fg: var(--overdue-fg);
+  --color-trusted-bg: var(--trusted-bg);
+  --color-trusted-fg: var(--trusted-fg);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--background);
+  color: var(--text);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

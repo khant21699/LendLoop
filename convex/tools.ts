@@ -1,6 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { requireUser } from "./lib/auth";
+import { getCurrentUser, requireUser } from "./lib/auth";
 import { categoryValidator } from "./lib/categories";
 
 const MAX_NAME = 80;
@@ -10,8 +10,10 @@ const MAX_DESCRIPTION = 500;
 // The client is untrusted, so every text field is trimmed and length-checked here.
 function cleanText(value: string, label: string, max: number, required = true) {
   const text = value.trim();
-  if (required && text.length === 0) throw new ConvexError(`${label} is required`);
-  if (text.length > max) throw new ConvexError(`${label} must be at most ${max} characters`);
+  if (required && text.length === 0)
+    throw new ConvexError(`${label} is required`);
+  if (text.length > max)
+    throw new ConvexError(`${label} must be at most ${max} characters`);
   return text;
 }
 
@@ -30,7 +32,12 @@ export const create = mutation({
       name: cleanText(args.name, "Name", MAX_NAME),
       category: args.category,
       condition: cleanText(args.condition, "Condition", MAX_CONDITION),
-      description: cleanText(args.description, "Description", MAX_DESCRIPTION, false),
+      description: cleanText(
+        args.description,
+        "Description",
+        MAX_DESCRIPTION,
+        false,
+      ),
     });
   },
 });
@@ -54,7 +61,12 @@ export const update = mutation({
       name: cleanText(fields.name, "Name", MAX_NAME),
       category: fields.category,
       condition: cleanText(fields.condition, "Condition", MAX_CONDITION),
-      description: cleanText(fields.description, "Description", MAX_DESCRIPTION, false),
+      description: cleanText(
+        fields.description,
+        "Description",
+        MAX_DESCRIPTION,
+        false,
+      ),
     });
   },
 });
@@ -77,7 +89,9 @@ export const remove = mutation({
       .withIndex("by_tool", (q) => q.eq("toolId", toolId))
       .collect();
     if (loans.some((l) => l.status === "pending" || l.status === "approved")) {
-      throw new ConvexError("Resolve open requests and loans for this tool first");
+      throw new ConvexError(
+        "Resolve open requests and loans for this tool first",
+      );
     }
 
     await ctx.db.delete(toolId);
@@ -99,9 +113,67 @@ export const listPublic = query({
         .query("loans")
         .withIndex("by_tool", (q) => q.eq("toolId", tool._id))
         .collect();
-      const isOut = loans.some((l) => l.status === "approved" && l.startDate <= today);
+      const isOut = loans.some(
+        (l) => l.status === "approved" && l.startDate <= today,
+      );
       if (!isOut) available.push({ name: tool.name, category: tool.category });
     }
     return available;
+  },
+});
+
+// The caller's own tools. Returns [] (not an error) until the users row exists,
+// because this can run a moment before the first-sign-in row is created.
+export const listMine = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (user === null) return [];
+    return await ctx.db
+      .query("tools")
+      .withIndex("by_owner", (q) => q.eq("ownerId", user._id))
+      .order("desc")
+      .collect();
+  },
+});
+
+// Every tool, for signed-in users, with availability. Owner details are not
+// included: only whether the tool is the caller's own.
+export const listAll = query({
+  args: { category: v.optional(categoryValidator) },
+  handler: async (ctx, { category }) => {
+    const user = await getCurrentUser(ctx);
+    if (user === null) return [];
+
+    const tools =
+      category === undefined
+        ? await ctx.db.query("tools").order("desc").take(200)
+        : await ctx.db
+            .query("tools")
+            .withIndex("by_category", (q) => q.eq("category", category))
+            .order("desc")
+            .take(200);
+
+    const now = new Date().toISOString().slice(0, 10);
+    return await Promise.all(
+      tools.map(async (tool) => {
+        const loans = await ctx.db
+          .query("loans")
+          .withIndex("by_tool", (q) => q.eq("toolId", tool._id))
+          .collect();
+        const current = loans.find(
+          (l) => l.status === "approved" && l.startDate <= now,
+        );
+        return {
+          _id: tool._id,
+          name: tool.name,
+          category: tool.category,
+          condition: tool.condition,
+          description: tool.description,
+          isMine: tool.ownerId === user._id,
+          onLoanUntil: current ? current.endDate : null,
+        };
+      }),
+    );
   },
 });

@@ -10,6 +10,8 @@
 
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_categories from "../lib/categories.js";
+import type * as lib_loans from "../lib/loans.js";
+import type * as loans from "../loans.js";
 import type * as tools from "../tools.js";
 import type * as users from "../users.js";
 
@@ -22,6 +24,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/categories": typeof lib_categories;
+  "lib/loans": typeof lib_loans;
+  loans: typeof loans;
   tools: typeof tools;
   users: typeof users;
 }>;

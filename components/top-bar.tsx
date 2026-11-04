@@ -4,6 +4,7 @@ import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { navRoutes, RouteConfig } from "@/lib/routes";
 
 const iconProps = {
   width: 16,
@@ -25,6 +26,14 @@ function UserIcon() {
   );
 }
 
+function ToolIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z" />
+    </svg>
+  );
+}
+
 function GearIcon() {
   return (
     <svg {...iconProps}>
@@ -34,6 +43,18 @@ function GearIcon() {
   );
 }
 
+const ICONS: Record<
+  NonNullable<RouteConfig["icon"]>,
+  () => React.JSX.Element
+> = {
+  user: UserIcon,
+  tool: ToolIcon,
+  gear: GearIcon,
+};
+
+const headerLinkClass =
+  "text-sm font-medium text-text hover:text-link sm:text-base";
+
 export function TopBar() {
   return (
     <header className="flex h-16 items-center justify-between gap-4 border-b border-border px-4 sm:px-6">
@@ -41,6 +62,11 @@ export function TopBar() {
         LendLoop
       </Link>
       <div className="flex items-center gap-3 sm:gap-4">
+        {navRoutes("header", "public").map((route) => (
+          <Link key={route.path} href={route.path} className={headerLinkClass}>
+            {route.label}
+          </Link>
+        ))}
         <ThemeToggle />
         <Suspense>
           <Show when="signed-out">
@@ -56,6 +82,15 @@ export function TopBar() {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
+            {navRoutes("header", "auth").map((route) => (
+              <Link
+                key={route.path}
+                href={route.path}
+                className={headerLinkClass}
+              >
+                {route.label}
+              </Link>
+            ))}
             <UserButton
               appearance={{
                 elements: {
@@ -64,16 +99,17 @@ export function TopBar() {
               }}
             >
               <UserButton.MenuItems>
-                <UserButton.Link
-                  label="Profile"
-                  labelIcon={<UserIcon />}
-                  href="/profile"
-                />
-                <UserButton.Link
-                  label="Settings"
-                  labelIcon={<GearIcon />}
-                  href="/settings"
-                />
+                {navRoutes("menu", "auth").map((route) => {
+                  const Icon = ICONS[route.icon ?? "user"];
+                  return (
+                    <UserButton.Link
+                      key={route.path}
+                      label={route.label}
+                      labelIcon={<Icon />}
+                      href={route.path}
+                    />
+                  );
+                })}
               </UserButton.MenuItems>
             </UserButton>
           </Show>

@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lend
+
+A platform for lending and borrowing. Built with [Next.js](https://nextjs.org) (App Router), Tailwind CSS v4 and [Clerk](https://clerk.com) for authentication.
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies and set up your environment variables (see [Authentication](#authentication-clerk)), then run the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Authentication (Clerk)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Authentication uses [`@clerk/nextjs`](https://clerk.com/docs/nextjs/getting-started/quickstart).
 
-## Learn More
+### Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` file in the project root (it is git-ignored):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Get both keys from the [Clerk Dashboard](https://dashboard.clerk.com/) under **API keys**, or run `npx -y clerk@latest env pull` after `npx -y clerk@latest auth login` and `npx -y clerk@latest link` to write them for you. Never expose `CLERK_SECRET_KEY` in client code or commit it.
 
-## Deploy on Vercel
+### How it is wired
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| File | Role |
+| --- | --- |
+| `middleware.ts` | `clerkMiddleware()` runs on all non-static routes and API routes so auth state is available to the app. |
+| `app/layout.tsx` | Wraps the app in `<ClerkProvider>`, applies the Clerk theme, and renders the header controls. |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The header shows Clerk's Sign In and Sign Up buttons in modal mode (`mode="modal"`) when signed out, and `<UserButton />` when signed in, using `<Show when="signed-out">` / `<Show when="signed-in">` inside `<Suspense>`.
+
+### Theming
+
+The app palette is defined as Tailwind theme tokens in `app/globals.css` (`--color-primary`, `--color-accent`, `--color-background`, and so on). `<ClerkProvider appearance={...}>` in `app/layout.tsx` maps Clerk's `variables` to those same CSS variables, so the Clerk modal follows the palette. Change the colors in `globals.css` and both the app and the Clerk UI update.
+
+### Protecting routes
+
+`clerkMiddleware()` does not protect any route by default. To require sign-in for a route, use `createRouteMatcher` in `middleware.ts`:
+
+```ts
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect();
+});
+```
+
+In Server Components and route handlers, read the user with `await auth()` from `@clerk/nextjs/server`.
+
+### Sign-in methods
+
+Enable or disable email, phone, username and social providers in the Clerk Dashboard under **User & authentication**. Before going to production, create a production instance and add its keys to your host's environment variables. See the [Clerk deployment guide](https://clerk.com/docs/guides/development/deployment/production).
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production |
+| `npm run start` | Run the production build |
+| `npm run lint` | Run ESLint |

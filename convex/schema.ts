@@ -23,7 +23,13 @@ export default defineSchema({
     description: v.string(),
   })
     .index("by_owner", ["ownerId"])
-    .index("by_category", ["category"]),
+    .index("by_category", ["category"])
+    // Full-text search on the name (prefix-matches the last word, so "dri"
+    // finds "drill"), optionally narrowed to one category.
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["category"],
+    }),
 
   // Dates are "YYYY-MM-DD" strings, which sort correctly as text, so range
   // and overdue checks are plain string comparisons.
@@ -39,6 +45,8 @@ export default defineSchema({
       v.literal("approved"),
       v.literal("declined"),
       v.literal("returned"),
+      // The borrower withdrew a request before it was approved.
+      v.literal("cancelled"),
     ),
     returnedAt: v.optional(v.number()),
   })

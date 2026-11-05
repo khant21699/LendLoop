@@ -1,17 +1,16 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useMutation } from "convex/react";
-import { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
 import { getErrorMessage } from "@/lib/errors";
 import { CategoryIcon } from "@/components/category-icon";
 import { StatusBadge } from "@/components/status-badge";
-
-type Tool = FunctionReturnType<typeof api.tools.listAll>[number];
+import { SearchedTool } from "@/lib/use-tool-search";
 
 // One line of the parts list. The request form opens inline under the row.
-export function ToolCard({ tool }: { tool: Tool }) {
+export function ToolCard({ tool }: { tool: SearchedTool }) {
   const requestLoan = useMutation(api.loans.requestLoan);
   const [open, setOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -68,7 +67,12 @@ export function ToolCard({ tool }: { tool: Tool }) {
           {tool.isMine ? (
             <span className="data">Your listing</span>
           ) : sent ? (
-            <span className="text-sm text-approved-fg">Request sent</span>
+            <span className="text-sm">
+              <span className="text-approved-fg">Request sent. </span>
+              <Link href="/requests" className="link-quiet">
+                Track it
+              </Link>
+            </span>
           ) : (
             !open && (
               <button

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { SignInButton } from "@clerk/nextjs";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -15,6 +16,7 @@ export default function ListingsPage() {
   const createTool = useMutation(api.tools.create);
   // Changing the key remounts the form, which clears it after a successful post.
   const [formKey, setFormKey] = useState(0);
+  const [listed, setListed] = useState<string | null>(null);
 
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
@@ -43,9 +45,18 @@ export default function ListingsPage() {
               submitLabel="List tool"
               onSubmit={async (values) => {
                 await createTool(values);
+                setListed(values.name.trim());
                 setFormKey((k) => k + 1);
               }}
             />
+            {listed && (
+              <p role="status" className="mt-4 text-sm text-approved-fg">
+                “{listed}” is on the board.{" "}
+                <Link href="/tools" className="link-quiet">
+                  See it in Browse
+                </Link>
+              </p>
+            )}
           </section>
 
           <section className="mt-10">

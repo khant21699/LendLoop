@@ -14,32 +14,47 @@ export type RouteConfig = {
   access: "public" | "auth" | "admin";
   // Where it appears in the top bar: a header link or the user menu. Omit to hide.
   nav?: "header" | "menu";
-  icon?: "user" | "tool" | "gear" | "shield"; // used by menu items
+  icon?: "user" | "tool" | "gear" | "shield" | "search" | "inbox"; // used by menu items and the mobile tab bar
 };
 
 export const routes: RouteConfig[] = [
   { path: "/", label: "Home", access: "public" },
-  { path: "/tools", label: "Browse", access: "auth", nav: "header" },
+  // Everyday places live in the header (a tab bar on phones).
   {
-    path: "/profile",
-    label: "Profile",
+    path: "/tools",
+    label: "Browse",
     access: "auth",
-    nav: "menu",
-    icon: "user",
+    nav: "header",
+    icon: "search",
   },
   {
     path: "/listings",
     label: "My listings",
     access: "auth",
-    nav: "menu",
+    nav: "header",
     icon: "tool",
   },
   {
     path: "/requests",
     label: "Requests",
     access: "auth",
+    nav: "header",
+    icon: "inbox",
+  },
+  {
+    path: "/admin",
+    label: "Admin",
+    access: "admin",
+    nav: "header",
+    icon: "shield",
+  },
+  // Account pages stay in the avatar menu.
+  {
+    path: "/profile",
+    label: "Profile",
+    access: "auth",
     nav: "menu",
-    icon: "tool",
+    icon: "user",
   },
   {
     path: "/settings",

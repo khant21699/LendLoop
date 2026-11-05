@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { MobileTabBar } from "@/components/main-nav";
 import { SheetFooter } from "@/components/sheet-footer";
 import { TopBar } from "@/components/top-bar";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
@@ -67,6 +68,7 @@ export default function RootLayout({
               <TopBar />
               {children}
               <SheetFooter />
+              <MobileTabBar />
             </ConvexClientProvider>
           </ClerkProvider>
         </ThemeProvider>

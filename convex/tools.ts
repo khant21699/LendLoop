@@ -1,3 +1,4 @@
+import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUser, requireUser } from "./lib/auth";
@@ -137,26 +138,44 @@ export const listMine = query({
   },
 });
 
-// Every tool, for signed-in users, with availability. Owner details are not
-// included: only whether the tool is the caller's own.
-export const listAll = query({
-  args: { category: v.optional(categoryValidator) },
-  handler: async (ctx, { category }) => {
+// Browse: search + category + availability, one page at a time. The database
+// does the filtering (search index / category index) and returns a cursor, so
+// the browser never downloads the whole table. Owner details are not included:
+// only whether the tool is the caller's own and whether its owner is trusted.
+export const search = query({
+  args: {
+    text: v.string(),
+    category: v.optional(categoryValidator),
+    availableOnly: v.optional(v.boolean()),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { text, category, availableOnly, paginationOpts }) => {
     const user = await getCurrentUser(ctx);
-    if (user === null) return [];
+    if (user === null) {
+      return { page: [], isDone: true, continueCursor: "" };
+    }
 
-    const tools =
-      category === undefined
-        ? await ctx.db.query("tools").order("desc").take(200)
-        : await ctx.db
+    const term = text.trim().slice(0, 80);
+    const tools = await (term
+      ? ctx.db
+          .query("tools")
+          .withSearchIndex("search_name", (q) =>
+            category
+              ? q.search("name", term).eq("category", category)
+              : q.search("name", term),
+          )
+          .paginate(paginationOpts)
+      : category
+        ? ctx.db
             .query("tools")
             .withIndex("by_category", (q) => q.eq("category", category))
             .order("desc")
-            .take(200);
+            .paginate(paginationOpts)
+        : ctx.db.query("tools").order("desc").paginate(paginationOpts));
 
     const now = new Date().toISOString().slice(0, 10);
-    return await Promise.all(
-      tools.map(async (tool) => {
+    const page = await Promise.all(
+      tools.page.map(async (tool) => {
         const loans = await ctx.db
           .query("loans")
           .withIndex("by_tool", (q) => q.eq("toolId", tool._id))
@@ -177,5 +196,13 @@ export const listAll = query({
         };
       }),
     );
+
+    // Availability is derived from loans, so it is applied after the page is
+    // read. A page can therefore come back shorter than requested; the cursor
+    // still moves forward, so "Load more" keeps working.
+    return {
+      ...tools,
+      page: availableOnly ? page.filter((t) => t.onLoanUntil === null) : page,
+    };
   },
 });

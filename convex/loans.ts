@@ -81,6 +81,25 @@ export const decline = mutation({
   },
 });
 
+// The borrower can withdraw a request until the owner has approved it. After
+// approval the owner has committed the tool, so it has to be returned (or
+// sorted out with the owner) instead. The row is kept with status "cancelled"
+// so there is a record of what happened.
+export const cancel = mutation({
+  args: { loanId: v.id("loans") },
+  handler: async (ctx, { loanId }) => {
+    const user = await requireUser(ctx);
+    const loan = await ctx.db.get(loanId);
+    if (loan === null) throw new ConvexError("Request not found");
+    if (loan.borrowerId !== user._id) throw new ConvexError("Not allowed");
+    if (loan.status !== "pending") {
+      throw new ConvexError("Only pending requests can be cancelled");
+    }
+
+    await ctx.db.patch(loanId, { status: "cancelled" });
+  },
+});
+
 // The lender (or an admin) marks it returned: they are the one holding the
 // tool again, and a borrower shouldn't be able to close their own loan.
 export const markReturned = mutation({
@@ -155,5 +174,21 @@ export const listIncoming = query({
         };
       }),
     );
+  },
+});
+
+// How many requests are waiting on the caller to approve or decline. Powers
+// the badge on the Requests link.
+export const pendingCount = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (user === null) return 0;
+    const pending = await ctx.db
+      .query("loans")
+      .withIndex("by_owner", (q) => q.eq("ownerId", user._id))
+      .filter((q) => q.eq(q.field("status"), "pending"))
+      .take(100);
+    return pending.length;
   },
 });

@@ -3,6 +3,7 @@ const STYLES = {
   approved: "bg-approved-bg text-approved-fg",
   declined: "bg-declined-bg text-declined-fg",
   returned: "bg-returned-bg text-returned-fg",
+  cancelled: "bg-returned-bg text-returned-fg",
   overdue: "bg-overdue-bg text-overdue-fg",
   // Tool availability reuses the approved / returned colors.
   available: "bg-approved-bg text-approved-fg",

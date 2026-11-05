@@ -53,67 +53,100 @@ const ICONS: Record<
 };
 
 const headerLinkClass =
-  "text-sm font-medium text-text hover:text-link sm:text-base";
+  "text-sm font-medium text-text underline-offset-8 hover:text-link hover:underline";
+
+function LogoMark() {
+  // Two interlocking loops.
+  return (
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 26 26"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <rect x="2" y="7" width="14" height="14" rx="2" />
+      <rect
+        x="10"
+        y="5"
+        width="14"
+        height="14"
+        rx="2"
+        className="text-primary"
+      />
+    </svg>
+  );
+}
 
 export function TopBar() {
   return (
-    <header className="flex h-16 items-center justify-between gap-4 border-b border-border px-4 sm:px-6">
-      <Link href="/" className="text-lg font-semibold tracking-tight">
-        LendLoop
-      </Link>
-      <div className="flex items-center gap-3 sm:gap-4">
-        {navRoutes("header", "public").map((route) => (
-          <Link key={route.path} href={route.path} className={headerLinkClass}>
-            {route.label}
-          </Link>
-        ))}
-        <ThemeToggle />
-        <Suspense>
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button className="text-text hover:text-link font-medium text-sm sm:text-base cursor-pointer">
-                Sign In
-              </button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="bg-primary hover:bg-primary-hover text-primary-foreground transition-colors rounded-full font-medium text-sm sm:text-base h-10 px-4 sm:px-5 cursor-pointer">
-                Sign Up
-              </button>
-            </SignUpButton>
-          </Show>
-          <Show when="signed-in">
-            {navRoutes("header", "auth").map((route) => (
-              <Link
-                key={route.path}
-                href={route.path}
-                className={headerLinkClass}
-              >
-                {route.label}
-              </Link>
-            ))}
-            <UserButton
-              appearance={{
-                elements: {
-                  userButtonPopoverActionButton__manageAccount: "hidden!",
-                },
-              }}
+    <header className="sticky top-0 z-20 border-b border-border bg-surface">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-display text-xl font-bold tracking-tight"
+        >
+          <LogoMark />
+          LendLoop
+        </Link>
+        <div className="flex items-center gap-3 sm:gap-5">
+          {navRoutes("header", "public").map((route) => (
+            <Link
+              key={route.path}
+              href={route.path}
+              className={headerLinkClass}
             >
-              <UserButton.MenuItems>
-                {navRoutes("menu", "auth").map((route) => {
-                  const Icon = ICONS[route.icon ?? "user"];
-                  return (
-                    <UserButton.Link
-                      key={route.path}
-                      label={route.label}
-                      labelIcon={<Icon />}
-                      href={route.path}
-                    />
-                  );
-                })}
-              </UserButton.MenuItems>
-            </UserButton>
-          </Show>
-        </Suspense>
+              {route.label}
+            </Link>
+          ))}
+          <ThemeToggle />
+          <Suspense>
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <button className={`${headerLinkClass} cursor-pointer`}>
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="btn btn-primary">Sign Up</button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              {navRoutes("header", "auth").map((route) => (
+                <Link
+                  key={route.path}
+                  href={route.path}
+                  className={headerLinkClass}
+                >
+                  {route.label}
+                </Link>
+              ))}
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonPopoverActionButton__manageAccount: "hidden!",
+                  },
+                }}
+              >
+                <UserButton.MenuItems>
+                  {navRoutes("menu", "auth").map((route) => {
+                    const Icon = ICONS[route.icon ?? "user"];
+                    return (
+                      <UserButton.Link
+                        key={route.path}
+                        label={route.label}
+                        labelIcon={<Icon />}
+                        href={route.path}
+                      />
+                    );
+                  })}
+                </UserButton.MenuItems>
+              </UserButton>
+            </Show>
+          </Suspense>
+        </div>
       </div>
     </header>
   );

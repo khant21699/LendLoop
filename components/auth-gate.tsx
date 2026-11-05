@@ -15,16 +15,14 @@ export function AuthGate({
 }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
-  if (isLoading) return <p className="mt-6 text-muted">Loading...</p>;
+  if (isLoading) return <p className="data mt-6">Loading...</p>;
 
   if (!isAuthenticated) {
     return (
-      <div className="mt-6 rounded-lg border border-border bg-surface p-6">
+      <div className="sheet mt-6 p-6">
         <p className="text-muted">{message}</p>
         <SignInButton mode="modal">
-          <button className="mt-4 h-10 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer">
-            Sign in
-          </button>
+          <button className="btn btn-primary mt-4">Sign in</button>
         </SignInButton>
       </div>
     );

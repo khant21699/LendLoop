@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { getErrorMessage } from "@/lib/errors";
+import { CategoryIcon } from "@/components/category-icon";
 import { ToolForm } from "@/components/tool-form";
 
 export function ListingCard({ tool }: { tool: Doc<"tools"> }) {
@@ -26,7 +27,7 @@ export function ListingCard({ tool }: { tool: Doc<"tools"> }) {
 
   if (editing) {
     return (
-      <li className="rounded-lg border border-border bg-surface p-4">
+      <li className="bg-surface px-4 py-4 sm:px-5">
         <ToolForm
           initial={{
             name: tool.name,
@@ -46,29 +47,32 @@ export function ListingCard({ tool }: { tool: Doc<"tools"> }) {
   }
 
   return (
-    <li className="rounded-lg border border-border bg-surface p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+    <li className="bg-surface px-4 py-4 sm:px-5">
+      <div className="flex items-start gap-4">
+        <span className="mt-0.5 text-link">
+          <CategoryIcon category={tool.category} size={30} />
+        </span>
+        <div className="min-w-0 flex-1">
           <p className="font-medium">{tool.name}</p>
-          <p className="mt-1 text-sm text-muted">
-            {tool.category} · {tool.condition}
+          <p className="data mt-1">
+            {tool.category} / {tool.condition}
           </p>
           {tool.description && (
             <p className="mt-2 text-sm">{tool.description}</p>
           )}
         </div>
-        <div className="flex shrink-0 gap-2 text-sm">
+        <div className="flex shrink-0 gap-2">
           {confirming ? (
             <>
               <button
                 onClick={handleDelete}
-                className="font-medium text-declined-fg cursor-pointer"
+                className="btn btn-outline btn-sm text-declined-fg"
               >
                 Confirm delete
               </button>
               <button
                 onClick={() => setConfirming(false)}
-                className="text-muted cursor-pointer"
+                className="btn btn-outline btn-sm"
               >
                 Cancel
               </button>
@@ -77,13 +81,13 @@ export function ListingCard({ tool }: { tool: Doc<"tools"> }) {
             <>
               <button
                 onClick={() => setEditing(true)}
-                className="text-link cursor-pointer"
+                className="btn btn-outline btn-sm"
               >
                 Edit
               </button>
               <button
                 onClick={() => setConfirming(true)}
-                className="text-muted hover:text-declined-fg cursor-pointer"
+                className="btn btn-outline btn-sm hover:text-declined-fg"
               >
                 Delete
               </button>

@@ -24,7 +24,7 @@ export function ThemeToggle() {
       type="button"
       aria-label="Toggle light and dark theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted transition-colors hover:text-text cursor-pointer"
+      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm border border-border text-muted transition-colors hover:border-primary hover:text-link"
     >
       <svg {...iconProps} className="dark:hidden">
         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />

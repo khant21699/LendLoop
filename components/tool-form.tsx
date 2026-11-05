@@ -18,9 +18,6 @@ const EMPTY: ToolValues = {
   description: "",
 };
 
-const inputClass =
-  "mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary";
-
 // Used for both "list a tool" and "edit a tool". The server re-validates
 // everything, so the maxLength attributes here are only a convenience.
 export function ToolForm({
@@ -56,10 +53,10 @@ export function ToolForm({
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-4">
-      <label className="text-sm font-medium">
+      <label className="field-label">
         Name
         <input
-          className={inputClass}
+          className="field mt-1"
           value={values.name}
           maxLength={80}
           required
@@ -67,10 +64,10 @@ export function ToolForm({
         />
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="text-sm font-medium">
+        <label className="field-label">
           Category
           <select
-            className={inputClass}
+            className="field mt-1"
             value={values.category}
             onChange={(e) => set("category", e.target.value as Category)}
           >
@@ -81,10 +78,10 @@ export function ToolForm({
             ))}
           </select>
         </label>
-        <label className="text-sm font-medium">
+        <label className="field-label">
           Condition
           <input
-            className={inputClass}
+            className="field mt-1"
             value={values.condition}
             maxLength={40}
             required
@@ -93,10 +90,10 @@ export function ToolForm({
           />
         </label>
       </div>
-      <label className="text-sm font-medium">
+      <label className="field-label">
         Description
         <textarea
-          className={inputClass}
+          className="field mt-1"
           rows={3}
           maxLength={500}
           value={values.description}
@@ -111,19 +108,11 @@ export function ToolForm({
       )}
 
       <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={saving}
-          className="h-10 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-60 cursor-pointer"
-        >
+        <button type="submit" disabled={saving} className="btn btn-primary">
           {saving ? "Saving..." : submitLabel}
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="h-10 rounded-full border border-border px-5 text-sm font-medium cursor-pointer"
-          >
+          <button type="button" onClick={onCancel} className="btn btn-outline">
             Cancel
           </button>
         )}

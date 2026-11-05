@@ -2,12 +2,18 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SheetFooter } from "@/components/sheet-footer";
 import { TopBar } from "@/components/top-bar";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
 });
 
@@ -25,14 +31,15 @@ const clerkAppearance = {
     colorInputBackground: "var(--color-surface)",
     colorInputText: "var(--color-text)",
     colorNeutral: "var(--color-text)",
-    borderRadius: "0.5rem",
+    borderRadius: "0.125rem",
+    fontFamily: "var(--font-geist-sans)",
   },
   elements: {
     // "!" (important) is needed because Clerk's CSS is unlayered and would
     // otherwise beat Tailwind v4's layered utilities.
-    card: "border! border-border! shadow-sm!",
+    card: "border! border-border! shadow-none! rounded-sm!",
     formButtonPrimary:
-      "bg-primary! hover:bg-primary-hover! text-primary-foreground!",
+      "bg-primary! hover:bg-primary-hover! text-primary-foreground! rounded-sm!",
     footerActionLink: "text-link! hover:text-link!",
   },
 };
@@ -51,13 +58,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <ClerkProvider appearance={clerkAppearance}>
             <TopBar />
             <ConvexClientProvider>{children}</ConvexClientProvider>
+            <SheetFooter />
           </ClerkProvider>
         </ThemeProvider>
       </body>

@@ -15,6 +15,11 @@
   --link: #4338ca;
   --accent: #f97316;
 
+  /* Extensions (the brief allows small ones): drafting-grid ink and a pale indigo wash. */
+  --grid: rgb(79 70 229 / 0.07);
+  --grid-major: rgb(79 70 229 / 0.13);
+  --wash: #eef2ff;
+
   --pending-bg: #fef3c7;
   --pending-fg: #92400e;
   --approved-bg: #dcfce7;
@@ -38,6 +43,10 @@
   --link: #a5b4fc;
   --accent: #fb923c;
 
+  --grid: rgb(165 180 252 / 0.07);
+  --grid-major: rgb(165 180 252 / 0.14);
+  --wash: #1e1b4b;
+
   --pending-bg: #451a03;
   --pending-fg: #fcd34d;
   --approved-bg: #052e16;
@@ -60,6 +69,7 @@
   --color-border: var(--border);
   --color-link: var(--link);
   --color-accent: var(--accent);
+  --color-wash: var(--wash);
 
   /* Same in both modes. */
   --color-primary: #4f46e5;
@@ -81,10 +91,110 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bricolage);
 }
 
+/* The page is a drafting sheet: a 24px construction grid with a heavier line
+   every fifth cell. Spacing in the app snaps to this unit. */
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
   color: var(--text);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  text-wrap: balance;
+}
+
+/* Browser surfaces themed from the palette. */
+::selection {
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@layer components {
+  /* Buttons: squared drafting corners, indigo ink. */
+  .btn {
+    @apply inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-sm px-4 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover;
+  }
+  .btn-outline {
+    @apply border border-border bg-surface text-text hover:border-primary hover:text-link;
+  }
+  .btn-sm {
+    @apply h-9 px-3;
+  }
+  .link-quiet {
+    @apply cursor-pointer text-link underline underline-offset-4 decoration-1 hover:decoration-2;
+  }
+
+  /* Form fields. */
+  .field {
+    @apply w-full rounded-sm border border-border bg-surface px-3 py-2 text-sm text-text outline-none placeholder:text-muted focus:border-primary;
+  }
+  .field-label {
+    @apply block text-sm font-medium;
+  }
+
+  /* Small measured text: part data, dates, labels. */
+  .data {
+    @apply font-mono text-xs tracking-[0.04em] text-muted;
+  }
+
+  /* Hairline panel used instead of shadowed cards. */
+  .sheet {
+    @apply border border-border bg-surface;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* The hero drawing draws itself once. Strokes are visible by default; the
+   animation only runs from "undrawn" to the resting state. */
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draw-in path,
+.draw-in line {
+  stroke-dasharray: 1;
+  animation: draw 1.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }

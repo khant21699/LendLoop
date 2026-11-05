@@ -5,12 +5,12 @@ import { useMutation } from "convex/react";
 import { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
 import { getErrorMessage } from "@/lib/errors";
+import { CategoryIcon } from "@/components/category-icon";
+import { StatusBadge } from "@/components/status-badge";
 
 type Tool = FunctionReturnType<typeof api.tools.listAll>[number];
 
-const inputClass =
-  "mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary";
-
+// One line of the parts list. The request form opens inline under the row.
 export function ToolCard({ tool }: { tool: Tool }) {
   const requestLoan = useMutation(api.loans.requestLoan);
   const [open, setOpen] = useState(false);
@@ -39,90 +39,98 @@ export function ToolCard({ tool }: { tool: Tool }) {
   }
 
   return (
-    <li className="rounded-lg border border-border bg-surface p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-medium">{tool.name}</p>
-          <p className="mt-1 text-sm text-muted">
-            {tool.category} · {tool.condition}
-          </p>
-        </div>
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-            tool.onLoanUntil
-              ? "bg-returned-bg text-returned-fg"
-              : "bg-approved-bg text-approved-fg"
-          }`}
-        >
-          {tool.onLoanUntil ? `On loan until ${tool.onLoanUntil}` : "Available"}
+    <li className="bg-surface px-4 py-4 sm:px-5">
+      <div className="flex items-start gap-4">
+        <span className="mt-0.5 text-link">
+          <CategoryIcon category={tool.category} size={30} />
         </span>
-      </div>
-      {tool.description && <p className="mt-2 text-sm">{tool.description}</p>}
-
-      <div className="mt-3">
-        {tool.isMine ? (
-          <p className="text-sm text-muted">Your listing</p>
-        ) : sent ? (
-          <p className="text-sm text-approved-fg">
-            Request sent. Track it under Requests.
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="font-medium">{tool.name}</p>
+            <StatusBadge
+              status={tool.onLoanUntil ? "onloan" : "available"}
+              label={
+                tool.onLoanUntil ? `Out until ${tool.onLoanUntil}` : "Available"
+              }
+            />
+          </div>
+          <p className="data mt-1">
+            {tool.category} / {tool.condition}
           </p>
-        ) : open ? (
-          <form onSubmit={handleSubmit} className="grid gap-3">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-sm font-medium">
-                From
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={startDate}
-                  min={today}
-                  required
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </label>
-              <label className="text-sm font-medium">
-                To
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={endDate}
-                  min={startDate || today}
-                  required
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </label>
-            </div>
-            {error && (
-              <p role="alert" className="text-sm text-declined-fg">
-                {error}
-              </p>
-            )}
-            <div className="flex gap-3">
+          {tool.description && (
+            <p className="mt-2 max-w-prose text-sm">{tool.description}</p>
+          )}
+        </div>
+        <div className="shrink-0 text-right">
+          {tool.isMine ? (
+            <span className="data">Your listing</span>
+          ) : sent ? (
+            <span className="text-sm text-approved-fg">Request sent</span>
+          ) : (
+            !open && (
               <button
-                type="submit"
-                disabled={saving}
-                className="h-9 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-60 cursor-pointer"
+                onClick={() => setOpen(true)}
+                className="btn btn-outline btn-sm"
               >
-                {saving ? "Sending..." : "Send request"}
+                Request
               </button>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="h-9 rounded-full border border-border px-4 text-sm font-medium cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <button
-            onClick={() => setOpen(true)}
-            className="h-9 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
-          >
-            Request to borrow
-          </button>
-        )}
+            )
+          )}
+        </div>
       </div>
+
+      {open && (
+        <form
+          onSubmit={handleSubmit}
+          className="mt-4 grid gap-3 border-t border-border pt-4 sm:ml-[46px]"
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="field-label">
+              From
+              <input
+                type="date"
+                className="field mt-1"
+                value={startDate}
+                min={today}
+                required
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </label>
+            <label className="field-label">
+              To
+              <input
+                type="date"
+                className="field mt-1"
+                value={endDate}
+                min={startDate || today}
+                required
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </label>
+          </div>
+          {error && (
+            <p role="alert" className="text-sm text-declined-fg">
+              {error}
+            </p>
+          )}
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="btn btn-primary btn-sm"
+            >
+              {saving ? "Sending..." : "Send request"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="btn btn-outline btn-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </li>
   );
 }

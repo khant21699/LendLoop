@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { CategoryIcon } from "@/components/category-icon";
 
 // Read-only. The query returns only { name, category }, so nothing about
 // owners can reach this component.
@@ -10,34 +11,36 @@ export function PublicToolList() {
 
   if (tools === undefined) {
     return (
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
-        {[0, 1, 2].map((i) => (
-          <li
-            key={i}
-            className="h-20 animate-pulse rounded-lg border border-border bg-surface"
-          />
+      <div className="grid animate-pulse gap-3 sm:grid-cols-2" aria-busy="true">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="sheet h-[4.5rem]" />
         ))}
-      </ul>
+      </div>
     );
   }
 
   if (tools.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-border p-8 text-center text-muted">
-        No tools available right now. Check back soon, or sign in to list one.
+      <p className="sheet p-8 text-center text-muted">
+        The pegboard is empty. Sign in and be the first to hang something up.
       </p>
     );
   }
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid gap-3 sm:grid-cols-2">
       {tools.map((tool, i) => (
         <li
           key={`${tool.name}-${i}`}
-          className="rounded-lg border border-border bg-surface p-4"
+          className="flex items-center gap-4 border border-border bg-surface px-4 py-4"
         >
-          <p className="font-medium">{tool.name}</p>
-          <p className="mt-1 text-sm text-muted">{tool.category}</p>
+          <span className="text-link">
+            <CategoryIcon category={tool.category} size={28} />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate font-medium">{tool.name}</p>
+            <p className="data mt-0.5">{tool.category}</p>
+          </div>
         </li>
       ))}
     </ul>

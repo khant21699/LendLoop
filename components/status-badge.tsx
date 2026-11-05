@@ -4,16 +4,26 @@ const STYLES = {
   declined: "bg-declined-bg text-declined-fg",
   returned: "bg-returned-bg text-returned-fg",
   overdue: "bg-overdue-bg text-overdue-fg",
+  // Tool availability reuses the approved / returned colors.
+  available: "bg-approved-bg text-approved-fg",
+  onloan: "bg-returned-bg text-returned-fg",
 } as const;
 
 export type BadgeStatus = keyof typeof STYLES;
 
-export function StatusBadge({ status }: { status: BadgeStatus }) {
+// An ink stamp: small mono caps with a hairline ring.
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: BadgeStatus;
+  label?: string;
+}) {
   return (
     <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STYLES[status]}`}
+      className={`inline-block shrink-0 rounded-sm px-2 py-1 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.1em] ring-1 ring-inset ring-current/25 ${STYLES[status]}`}
     >
-      {status}
+      {label ?? status}
     </span>
   );
 }

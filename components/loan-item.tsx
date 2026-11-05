@@ -13,7 +13,11 @@ type Loan = {
   overdue: boolean;
 };
 
-export type LoanAction = { label: string; run: () => Promise<unknown> };
+export type LoanAction = {
+  label: string;
+  run: () => Promise<unknown>;
+  primary?: boolean;
+};
 
 // One row for either view. `personLabel` says who personName is ("Owner" or
 // "Borrower"); `actions` are the buttons this viewer is allowed to use.
@@ -43,7 +47,7 @@ export function LoanItem({
   }
 
   return (
-    <li className="rounded-lg border border-border bg-surface p-4">
+    <li className="bg-surface px-4 py-4 sm:px-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium">{loan.toolName}</p>
@@ -61,7 +65,9 @@ export function LoanItem({
               key={action.label}
               disabled={busy}
               onClick={() => run(action)}
-              className="h-9 rounded-full border border-border px-4 text-sm font-medium transition-colors hover:border-primary disabled:opacity-60 cursor-pointer"
+              className={`btn btn-sm ${
+                action.primary ? "btn-primary" : "btn-outline"
+              }`}
             >
               {action.label}
             </button>

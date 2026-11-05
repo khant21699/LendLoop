@@ -4,6 +4,7 @@ import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AuthGate } from "@/components/auth-gate";
 import { LoanAction, LoanItem } from "@/components/loan-item";
+import { PageHeader } from "@/components/page-header";
 
 export default function RequestsPage() {
   const { isAuthenticated } = useConvexAuth();
@@ -17,18 +18,25 @@ export default function RequestsPage() {
   const markReturned = useMutation(api.loans.markReturned);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-semibold tracking-tight">Requests</h1>
+    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
+      <PageHeader title="Requests">
+        Who wants your tools, and which tools you&apos;ve asked for.
+      </PageHeader>
 
       <AuthGate message="Sign in to see your requests.">
         <section className="mt-8">
-          <h2 className="mb-4 text-lg font-semibold">Incoming requests</h2>
+          <h2 className="mb-4 text-xl font-semibold tracking-tight">
+            Incoming requests
+          </h2>
           {incoming === undefined ? (
             <Skeleton />
           ) : incoming.length === 0 ? (
-            <Empty>No one has asked to borrow your tools yet.</Empty>
+            <Empty>
+              No one has asked to borrow your tools yet. Patience, the neighbors
+              are warming up.
+            </Empty>
           ) : (
-            <ul className="grid gap-3">
+            <ul className="grid gap-px border border-border bg-border">
               {incoming.map((loan) => {
                 const actions: LoanAction[] =
                   loan.status === "pending"
@@ -64,15 +72,18 @@ export default function RequestsPage() {
         </section>
 
         <section className="mt-10">
-          <h2 className="mb-4 text-lg font-semibold">My requests</h2>
+          <h2 className="mb-4 text-xl font-semibold tracking-tight">
+            My requests
+          </h2>
           {mine === undefined ? (
             <Skeleton />
           ) : mine.length === 0 ? (
             <Empty>
-              You haven&apos;t requested anything yet. Browse tools to start.
+              You haven&apos;t borrowed anything yet. Browse tools and make a
+              neighbor&apos;s day.
             </Empty>
           ) : (
-            <ul className="grid gap-3">
+            <ul className="grid gap-px border border-border bg-border">
               {mine.map((loan) => (
                 <LoanItem key={loan._id} loan={loan} personLabel="Owner" />
               ))}
@@ -85,18 +96,9 @@ export default function RequestsPage() {
 }
 
 function Skeleton() {
-  return (
-    <div
-      className="h-20 animate-pulse rounded-lg border border-border bg-surface"
-      aria-busy="true"
-    />
-  );
+  return <div className="sheet h-20 animate-pulse" aria-busy="true" />;
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="rounded-lg border border-dashed border-border p-8 text-center text-muted">
-      {children}
-    </p>
-  );
+  return <p className="sheet p-8 text-center text-muted">{children}</p>;
 }

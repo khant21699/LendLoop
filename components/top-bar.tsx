@@ -2,7 +2,9 @@
 
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { useQuery } from "convex/react";
 import { Suspense } from "react";
+import { api } from "@/convex/_generated/api";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { navRoutes, RouteConfig } from "@/lib/routes";
 
@@ -34,6 +36,14 @@ function ToolIcon() {
   );
 }
 
+function ShieldIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z" />
+    </svg>
+  );
+}
+
 function GearIcon() {
   return (
     <svg {...iconProps}>
@@ -50,6 +60,7 @@ const ICONS: Record<
   user: UserIcon,
   tool: ToolIcon,
   gear: GearIcon,
+  shield: ShieldIcon,
 };
 
 const headerLinkClass =
@@ -81,6 +92,14 @@ function LogoMark() {
 }
 
 export function TopBar() {
+  // The admin entry shows only for admins. The role comes from Convex, and the
+  // admin page and functions check it again; this just hides the link.
+  const me = useQuery(api.users.me);
+  const menuRoutes = [
+    ...navRoutes("menu", "auth"),
+    ...(me?.role === "admin" ? navRoutes("menu", "admin") : []),
+  ];
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -131,7 +150,7 @@ export function TopBar() {
                 }}
               >
                 <UserButton.MenuItems>
-                  {navRoutes("menu", "auth").map((route) => {
+                  {menuRoutes.map((route) => {
                     const Icon = ICONS[route.icon ?? "user"];
                     return (
                       <UserButton.Link

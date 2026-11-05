@@ -7,6 +7,7 @@ import { BadgeStatus, StatusBadge } from "@/components/status-badge";
 type Loan = {
   toolName: string;
   personName: string;
+  personTrusted?: boolean;
   startDate: string;
   endDate: string;
   status: "pending" | "approved" | "declined" | "returned";
@@ -51,9 +52,14 @@ export function LoanItem({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium">{loan.toolName}</p>
-          <p className="mt-1 text-sm text-muted">
-            {loan.startDate} to {loan.endDate} · {personLabel}:{" "}
-            {loan.personName}
+          <p className="data mt-1">
+            {loan.startDate} to {loan.endDate}
+          </p>
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
+            {personLabel}: {loan.personName}
+            {loan.personTrusted && (
+              <StatusBadge status="trusted" label="Trusted lender" />
+            )}
           </p>
         </div>
         <StatusBadge status={badge} />

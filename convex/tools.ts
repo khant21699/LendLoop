@@ -164,6 +164,7 @@ export const listAll = query({
         const current = loans.find(
           (l) => l.status === "approved" && l.startDate <= now,
         );
+        const owner = await ctx.db.get(tool.ownerId);
         return {
           _id: tool._id,
           name: tool.name,
@@ -171,6 +172,7 @@ export const listAll = query({
           condition: tool.condition,
           description: tool.description,
           isMine: tool.ownerId === user._id,
+          ownerTrusted: owner?.isTrustedLender ?? false,
           onLoanUntil: current ? current.endDate : null,
         };
       }),

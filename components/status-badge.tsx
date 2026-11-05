@@ -7,6 +7,7 @@ const STYLES = {
   // Tool availability reuses the approved / returned colors.
   available: "bg-approved-bg text-approved-fg",
   onloan: "bg-returned-bg text-returned-fg",
+  trusted: "bg-trusted-bg text-trusted-fg",
 } as const;
 
 export type BadgeStatus = keyof typeof STYLES;

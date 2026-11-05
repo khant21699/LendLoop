@@ -118,6 +118,7 @@ export const listMine = query({
           _id: loan._id,
           toolName: tool?.name ?? "Removed tool",
           personName: owner?.name ?? "Unknown",
+          personTrusted: owner?.isTrustedLender ?? false,
           startDate: loan.startDate,
           endDate: loan.endDate,
           status: loan.status,

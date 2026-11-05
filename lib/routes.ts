@@ -9,10 +9,12 @@ export type RouteConfig = {
   path: string;
   label: string;
   // "public": anyone. "auth": signed-in users only (middleware redirects others).
-  access: "public" | "auth";
+  // "admin": also needs the admin role. The middleware can only check sign-in;
+  // the role lives in Convex, so the page and every Convex function check it too.
+  access: "public" | "auth" | "admin";
   // Where it appears in the top bar: a header link or the user menu. Omit to hide.
   nav?: "header" | "menu";
-  icon?: "user" | "tool" | "gear"; // used by menu items
+  icon?: "user" | "tool" | "gear" | "shield"; // used by menu items
 };
 
 export const routes: RouteConfig[] = [
@@ -51,7 +53,7 @@ export const routes: RouteConfig[] = [
 // Matches the path itself and anything under it, but not look-alikes
 // ("/tools" matches "/tools" and "/tools/1", not "/toolshed").
 export const protectedRoutePatterns = routes
-  .filter((route) => route.access === "auth")
+  .filter((route) => route.access !== "public")
   .map((route) => `${route.path}(/.*)?`);
 
 export const navRoutes = (

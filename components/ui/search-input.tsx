@@ -1,6 +1,6 @@
 "use client";
 
-import { NavIcon } from "@/components/nav-icons";
+import { NavIcon } from "@/components/ui/icon/nav-icons";
 
 export function SearchInput({
   value,

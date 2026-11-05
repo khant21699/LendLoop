@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { CategoryIcon } from "@/components/category-icon";
-import { matchesSearch, SearchInput } from "@/components/search-input";
+import { CategoryIcon } from "@/components/ui/icon/category-icon";
+import { matchesSearch, SearchInput } from "@/components/ui/search-input";
 
 // Read-only. The query returns only { name, category }, so nothing about
 // owners can reach this component.

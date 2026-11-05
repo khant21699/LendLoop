@@ -5,8 +5,8 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { getErrorMessage } from "@/lib/errors";
-import { CategoryIcon } from "@/components/category-icon";
-import { ToolForm } from "@/components/tool-form";
+import { CategoryIcon } from "@/components/ui/icon/category-icon";
+import { ToolForm } from "@/components/tools/tool-form";
 
 export function ListingCard({ tool }: { tool: Doc<"tools"> }) {
   const updateTool = useMutation(api.tools.update);

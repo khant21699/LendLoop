@@ -36,7 +36,7 @@ Get the keys from the [Clerk Dashboard](https://dashboard.clerk.com/) under **AP
 | --- | --- |
 | `middleware.ts` | `clerkMiddleware()` runs on all non-static routes and API routes so auth state is available to the app. |
 | `app/layout.tsx` | Wraps the app in `<ClerkProvider>` (with the Clerk theme) and `<ConvexClientProvider>`, and renders `<TopBar />`. |
-| `components/top-bar.tsx` | Header with Sign In / Sign Up (modal) when signed out and the user menu when signed in. |
+| `components/layout/top-bar.tsx` | Header with Sign In / Sign Up (modal) when signed out and the user menu when signed in. |
 
 The header shows Clerk's Sign In and Sign Up buttons in modal mode (`mode="modal"`) when signed out, and `<UserButton />` when signed in, using `<Show when="signed-out">` / `<Show when="signed-in">` inside `<Suspense>`.
 
@@ -87,7 +87,7 @@ Enable or disable email, phone, username and social providers in the Clerk Dashb
 | File | Role |
 | --- | --- |
 | `convex/auth.config.ts` | Trusts JWTs issued by your Clerk instance (`CLERK_FRONTEND_API_URL`, `applicationID: "convex"`). |
-| `components/convex-client-provider.tsx` | Creates the `ConvexReactClient` and wraps the app in `ConvexProviderWithClerk`, passing Clerk's `useAuth`, so Convex receives the Clerk token. |
+| `components/providers/convex-client-provider.tsx` | Creates the `ConvexReactClient` and wraps the app in `ConvexProviderWithClerk`, passing Clerk's `useAuth`, so Convex receives the Clerk token. |
 | `convex/debug.ts` | Temporary `whoami` query that returns `ctx.auth.getUserIdentity()`. Remove it once real functions exist. |
 | `app/profile/page.tsx` | Shows the `whoami` result: your identity if backend auth works, or "Not authenticated". |
 

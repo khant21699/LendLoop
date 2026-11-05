@@ -1,6 +1,6 @@
-import { HeroCta } from "@/components/hero-cta";
-import { HeroDrawing } from "@/components/hero-drawing";
-import { PublicToolList } from "@/components/public-tool-list";
+import { HeroCta } from "@/components/home/hero-cta";
+import { HeroDrawing } from "@/components/home/hero-drawing";
+import { PublicToolList } from "@/components/home/public-tool-list";
 
 export default function Home() {
   return (

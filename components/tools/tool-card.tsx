@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { getErrorMessage } from "@/lib/errors";
-import { CategoryIcon } from "@/components/category-icon";
-import { StatusBadge } from "@/components/status-badge";
+import { CategoryIcon } from "@/components/ui/icon/category-icon";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { SearchedTool } from "@/lib/use-tool-search";
 
 // One line of the parts list. The request form opens inline under the row.

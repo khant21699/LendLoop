@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { ConvexClientProvider } from "@/components/convex-client-provider";
-import { ThemeProvider } from "@/components/theme-provider";
-import { MobileTabBar } from "@/components/main-nav";
-import { SheetFooter } from "@/components/sheet-footer";
-import { TopBar } from "@/components/top-bar";
+import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { MobileTabBar } from "@/components/layout/main-nav";
+import { SheetFooter } from "@/components/layout/sheet-footer";
+import { TopBar } from "@/components/layout/top-bar";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 

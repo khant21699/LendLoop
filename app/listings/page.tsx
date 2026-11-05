@@ -5,9 +5,9 @@ import Link from "next/link";
 import { SignInButton } from "@clerk/nextjs";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ListingCard } from "@/components/listing-card";
-import { PageHeader } from "@/components/page-header";
-import { ToolForm } from "@/components/tool-form";
+import { ListingCard } from "@/components/tools/listing-card";
+import { PageHeader } from "@/components/layout/page-header";
+import { ToolForm } from "@/components/tools/tool-form";
 
 export default function ListingsPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();

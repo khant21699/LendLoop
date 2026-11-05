@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { AuthGate } from "@/components/auth-gate";
-import { LoanAction, LoanItem } from "@/components/loan-item";
-import { PageHeader } from "@/components/page-header";
+import { AuthGate } from "@/components/auth/auth-gate";
+import { LoanAction, LoanItem } from "@/components/requests/loan-item";
+import { PageHeader } from "@/components/layout/page-header";
 
 // Pending first (they need an answer), then overdue, approved, and the rest.
 const WEIGHT = {

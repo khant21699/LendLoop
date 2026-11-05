@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { getErrorMessage } from "@/lib/errors";
-import { BadgeStatus, StatusBadge } from "@/components/status-badge";
+import { BadgeStatus, StatusBadge } from "@/components/ui/status-badge";
 
 type Loan = {
   toolName: string;

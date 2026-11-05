@@ -3,9 +3,9 @@
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { MainNav } from "@/components/main-nav";
-import { NavIcon } from "@/components/nav-icons";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { MainNav } from "@/components/layout/main-nav";
+import { NavIcon } from "@/components/ui/icon/nav-icons";
 import { navRoutes } from "@/lib/routes";
 
 const headerLinkClass =

@@ -1,8 +1,8 @@
 "use client";
 
-import { AuthGate } from "@/components/auth-gate";
-import { PageHeader } from "@/components/page-header";
-import { ToolBrowser } from "@/components/tool-browser";
+import { AuthGate } from "@/components/auth/auth-gate";
+import { PageHeader } from "@/components/layout/page-header";
+import { ToolBrowser } from "@/components/tools/tool-browser";
 
 export default function ToolsPage() {
   return (

@@ -6,9 +6,9 @@ import {
   AdminLoans,
   AdminTools,
   AdminUsers,
-} from "@/components/admin-sections";
-import { AuthGate } from "@/components/auth-gate";
-import { PageHeader } from "@/components/page-header";
+} from "@/components/admin/admin-sections";
+import { AuthGate } from "@/components/auth/auth-gate";
+import { PageHeader } from "@/components/layout/page-header";
 
 export default function AdminPage() {
   const me = useQuery(api.users.me);

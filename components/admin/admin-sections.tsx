@@ -5,8 +5,8 @@ import { useMutation, useQuery } from "convex/react";
 import { FunctionReturnType } from "convex/server";
 import { api } from "@/convex/_generated/api";
 import { getErrorMessage } from "@/lib/errors";
-import { CategoryIcon } from "@/components/category-icon";
-import { StatusBadge } from "@/components/status-badge";
+import { CategoryIcon } from "@/components/ui/icon/category-icon";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type AdminTool = FunctionReturnType<typeof api.admin.listAllTools>[number];
 type AdminUser = FunctionReturnType<typeof api.admin.listUsers>[number];

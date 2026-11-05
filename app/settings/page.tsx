@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { useClerk } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/layout/page-header";
 
 const THEMES = [
   { value: "system", label: "Match my device" },

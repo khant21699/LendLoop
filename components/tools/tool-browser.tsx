@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SearchInput } from "@/components/search-input";
-import { ToolCard } from "@/components/tool-card";
+import { SearchInput } from "@/components/ui/search-input";
+import { ToolCard } from "@/components/tools/tool-card";
 import { CATEGORIES, Category } from "@/convex/lib/categories";
 import { useDebouncedValue } from "@/lib/use-debounced-value";
 import { useToolSearch } from "@/lib/use-tool-search";

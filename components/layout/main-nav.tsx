@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Show } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { NavIcon } from "@/components/nav-icons";
+import { NavIcon } from "@/components/ui/icon/nav-icons";
 import { navRoutes, RouteConfig } from "@/lib/routes";
 
 // The signed-in links from the route config, plus whether the viewer is an
